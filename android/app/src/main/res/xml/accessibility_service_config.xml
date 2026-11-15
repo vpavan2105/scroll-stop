@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What the service is allowed to see and do.
+  - packageNames: the ONLY apps that send us events. Banking apps (and every
+    other app) are invisible to ScrollStop, which is also why apps like YONO
+    no longer refuse to open. Covers are removed when you leave Instagram by a
+    light check in the service (see presenceCheck in ReelsBlockerService).
+    Settings packages: stock Android, Samsung, Xiaomi, Oppo/Realme/OnePlus, Vivo.
+  - flagReportViewIds: gives us view IDs like "com.instagram.android:id/clips_tab".
+  - flagRetrieveInteractiveWindows: tells us when windows change (shade, keyboard, app switch).
+  - typeViewClicked: used by teach mode to learn which button you tapped.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewScrolled|typeWindowsChanged|typeViewClicked"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews"
+    android:canRetrieveWindowContent="true"
+    android:packageNames="com.instagram.android,com.google.android.youtube,com.android.settings,com.samsung.accessibility,com.miui.securitycenter,com.coloros.safecenter,com.oplus.safecenter,com.iqoo.secure"
+    android:description="@string/accessibility_description"
+    android:summary="@string/service_summary"
+    android:notificationTimeout="50" />

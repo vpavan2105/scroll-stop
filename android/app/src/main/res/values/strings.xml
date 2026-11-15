@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ScrollStop</string>
+    <string name="service_label">ScrollStop</string>
+    <!-- Short line shown in the Accessibility list (Android 12+) -->
+    <string name="service_summary">Limits Instagram Reels and YouTube Shorts</string>
+    <!-- Keep the first words the same: the Settings guard recognises our Settings page by them. -->
+    <string name="accessibility_description">Hides the Reels and Explore tabs inside Instagram and the Shorts tab inside YouTube, and limits reels, Shorts and suggested posts each day. It only receives Instagram, YouTube and Settings. Banking and all other apps are invisible to it. It has no internet access, so nothing leaves your phone.</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <!-- Always dark, like the design. Instagram-independent. -->
+    <style name="AppTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/ink</item>
+        <item name="android:statusBarColor">@color/ink</item>
+        <item name="android:navigationBarColor">@color/ink</item>
+        <item name="android:colorAccent">@color/amber</item>
+    </style>
+</resources>

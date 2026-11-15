@@ -1,0 +1,24 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Android
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
+android/captures/
+*.jks
+*.keystore
+
+# Website
+website/node_modules/
+website/.next/
+website/.vercel/
+website/.env*
+website/next-env.d.ts
+*.tsbuildinfo
