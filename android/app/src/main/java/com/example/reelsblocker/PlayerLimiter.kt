@@ -53,6 +53,9 @@ class PlayerLimiter(
         handler.removeCallbacks(settled)
     }
 
+    /** True once today's limit for this player is used up. */
+    fun limitReached() = counter.limitReached()
+
     /** The player's pager scrolled: probably a swipe to the next video. */
     fun onScrolled(event: AccessibilityEvent) {
         val index = event.fromIndex                  // position of the visible video, -1 if unknown

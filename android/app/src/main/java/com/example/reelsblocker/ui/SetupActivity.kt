@@ -7,13 +7,17 @@ import android.os.Build
 import android.provider.Settings
 import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import com.example.reelsblocker.Notifier
+import com.example.reelsblocker.OffGuard
 import com.example.reelsblocker.R
 import com.example.reelsblocker.ServiceStatus
 
 /**
- * Setup (design screen 1): explains what access the app needs BEFORE asking,
- * then walks through the three steps. Each step ticks itself off when done.
+ * Setup (design screen 1). Order: allow restricted settings first (some phones
+ * gate Usage access and Display-over-other-apps behind it too), then those two
+ * permissions, then notifications, and finally turn on in Accessibility.
+ * Each step has an illustrated "how to" card.
  */
 class SetupActivity : Screen() {
 
@@ -25,7 +29,6 @@ class SetupActivity : Screen() {
         val steps = steps()
         val current = steps.indexOfFirst { !it.done }          // -1 = everything done
 
-        // Progress
         place(text(if (current < 0) "All set" else "Step ${current + 1} of ${steps.size}", TextStyle.LABEL, Palette.FAINT), 0)
         val bar = row()
         steps.forEachIndexed { i, step ->
@@ -41,15 +44,16 @@ class SetupActivity : Screen() {
         place(text(if (current < 0) "You're protected" else "Turn on ScrollStop", TextStyle.HERO), 22)
         place(
             text(
-                "Android calls this an Accessibility service. It lets the app see Instagram's screen " +
-                    "so it can hide the Reels and Explore buttons.",
+                "A few quick permissions. Android gates some of them for apps installed from a file, " +
+                    "so allow restricted settings first — then the rest just work.",
                 TextStyle.BODY, Palette.MUTED,
             ),
             8,
         )
 
-        place(whatThisAllows(), 22)
+        if (current <= 0) place(whatThisAllows(), 22)
         place(stepList(steps, current), 14)
+        guideCard(current)?.let { place(it, 14) }
 
         placeSpacer()
         primaryAction(current)?.let { place(it, 20) }
@@ -66,22 +70,29 @@ class SetupActivity : Screen() {
     private fun steps(): List<Step> {
         val restrictedNeeded = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
         val enabled = ServiceStatus.isEnabled(this)
-        // Android 13+ hides "Allow restricted settings" until you've tried to
-        // turn the service on once and seen the "Restricted setting" message.
-        val tried = prefs.getBoolean("restricted_tried", false)
         return listOf(
             Step(
                 "Allow restricted settings",
-                when {
-                    !restrictedNeeded -> "Not needed on this phone"
-                    !tried -> "Android blocks this for apps installed from a file. First tap ScrollStop in " +
-                        "Accessibility. It will say \"Restricted setting\". Close that message and come back."
-                    else -> "Now open App info, tap ⋮ (top right) › Allow restricted settings, confirm, then come back."
-                },
+                if (!restrictedNeeded) "Not needed on this phone"
+                else "First tap ScrollStop in Accessibility › Installed apps, then allow it in App info. This unlocks the next steps.",
                 !restrictedNeeded || enabled || prefs.getBoolean("restricted_done", false),
             ),
-            Step("Turn on in Accessibility", "Settings › Accessibility › ScrollStop", ServiceStatus.isRunning(this)),
-            Step("Allow notifications", "So you hear about it if protection stops", Notifier.allowed(this)),
+            Step(
+                "Allow Usage access",
+                "So ScrollStop can keep Instagram and YouTube blocked when it's switched off for banking.",
+                OffGuard.hasUsageAccess(this),
+            ),
+            Step(
+                "Allow Display over other apps",
+                "So ScrollStop can show the block screen over Instagram and YouTube.",
+                OffGuard.hasOverlay(this),
+            ),
+            Step(
+                "Allow notifications",
+                "So you hear about it if protection stops",
+                Notifier.allowed(this) || prefs.getBoolean("notif_skipped", false),
+            ),
+            Step("Turn on in Accessibility", "Accessibility › Installed apps › ScrollStop › turn on → Allow.", ServiceStatus.isRunning(this)),
         )
     }
 
@@ -126,39 +137,154 @@ class SetupActivity : Screen() {
     // ---------------------------------------------------------------- buttons
 
     private fun primaryAction(current: Int): View? = when (current) {
-        0 -> if (!prefs.getBoolean("restricted_tried", false)) {
-            button("Open Accessibility settings") {
-                prefs.edit().putBoolean("restricted_tried", true).apply()
-                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-            }
-        } else {
-            button("Open App info") {
-                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)))
+        0 -> button("I've allowed restricted settings") {
+            prefs.edit().putBoolean("restricted_done", true).apply()
+            rebuild()
+        }
+        1 -> button("Allow Usage access") {
+            try {
+                startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, Uri.fromParts("package", packageName, null)))
+            } catch (_: Exception) {
+                startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
             }
         }
-        1 -> button("Open Accessibility settings") {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        2 -> button("Allow Display over other apps") {
+            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.fromParts("package", packageName, null)))
         }
-        2 -> button("Allow notifications") {
+        3 -> button("Allow notifications") {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
             } else {
                 startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
             }
         }
+        4 -> button("Open Accessibility settings") {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
         else -> button("Done") { finish() }
     }
 
     private fun secondaryAction(current: Int): View? = when (current) {
-        0 -> button(
-            if (prefs.getBoolean("restricted_tried", false)) "I've allowed it" else "I didn't see that message",
-            ButtonKind.GHOST, 44,
-        ) {
+        0 -> button("My phone didn't block anything", ButtonKind.GHOST, 44) {
             prefs.edit().putBoolean("restricted_done", true).apply()
             rebuild()
         }
-        1 -> button("I've turned it on", ButtonKind.GHOST, 44) { rebuild() }
-        2 -> button("Skip for now", ButtonKind.GHOST, 44) { finish() }
+        3 -> button("Skip for now", ButtonKind.GHOST, 44) {
+            prefs.edit().putBoolean("notif_skipped", true).apply()
+            rebuild()
+        }
+        4 -> button("I've turned it on", ButtonKind.GHOST, 44) { rebuild() }
         else -> null
+    }
+
+    // ---------------------------------------------------------------- illustrated guide
+
+    private fun guideCard(current: Int): View? {
+        if (current == 0) return restrictedGuide()
+        val title: String
+        val lines: List<String>
+        val showMock: Boolean
+        when (current) {
+            1 -> {
+                title = "How to allow Usage access"
+                lines = listOf(
+                    "The \"Usage access\" list opens.",
+                    "Scroll to ScrollStop and tap it.",
+                    "Turn \"Permit usage access\" on.",
+                )
+                showMock = true
+            }
+            2 -> {
+                title = "How to allow Display over other apps"
+                lines = listOf(
+                    "ScrollStop's page opens.",
+                    "Turn \"Allow display over other apps\" on.",
+                )
+                showMock = true
+            }
+            3 -> {
+                title = "Notifications"
+                lines = listOf(
+                    "Tap Allow when Android asks.",
+                    "Used only to warn you if protection ever stops.",
+                )
+                showMock = false
+            }
+            4 -> {
+                title = "How to turn it on in Accessibility"
+                lines = listOf(
+                    "Tap \"Open Accessibility settings\" below.",
+                    "Open \"Installed apps\" (some phones say \"Downloaded apps\").",
+                    "Tap ScrollStop, then turn the big switch on.",
+                    "A dialog asks to allow full control — tap Allow.",
+                    "Switch greyed out? Go back and finish \"Allow restricted settings\" first.",
+                )
+                showMock = true
+            }
+            else -> return null
+        }
+
+        val card = card()
+        card.addChild(text(title, TextStyle.HEADING))
+        lines.forEachIndexed { i, line ->
+            val r = row().apply { gravity = Gravity.TOP }
+            r.addChild(text((i + 1).toString(), TextStyle.SMALL_BOLD, Palette.AMBER), dp(18), WRAP)
+            r.addChild(text(line, TextStyle.SMALL, Palette.TEXT_SOFT), 0, WRAP, weight = 1f, start = dp(8))
+            card.addChild(r, top = dp(10))
+        }
+        if (showMock) card.addChild(toggleMock(), top = dp(14))
+        return card
+    }
+
+    /** The restricted-settings step: both actions in order, because the Allow option only
+     *  appears in App info AFTER you've tapped ScrollStop in Accessibility › Installed apps. */
+    private fun restrictedGuide(): View {
+        val card = card()
+        card.addChild(text("Allow restricted settings — 2 steps", TextStyle.HEADING))
+        listOf(
+            "1.  Open Accessibility below, then \"Installed apps\" (some phones say \"Downloaded apps\").",
+            "     Tap ScrollStop. Android shows \"Restricted setting\" — tap OK and come back.",
+            "2.  Open App info below, tap the ⋮ menu (top-right), then \"Allow restricted settings\" and confirm.",
+        ).forEach { line ->
+            card.addChild(text(line, TextStyle.SMALL, Palette.TEXT_SOFT), top = dp(8))
+        }
+        card.addChild(button("Open Accessibility", ButtonKind.OUTLINE, 44) {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }, top = dp(14))
+        card.addChild(button("Open App info", ButtonKind.OUTLINE, 44) {
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)))
+        }, top = dp(8))
+        card.addChild(
+            text("The \"Allow restricted settings\" option only appears after step 1.", TextStyle.CAPTION, Palette.FAINT),
+            top = dp(10),
+        )
+        return card
+    }
+
+    private fun toggleMock(): View {
+        val rowv = row().apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(12), dp(10), dp(12), dp(10))
+            background = rounded(Palette.SUNKEN, dp(12).toFloat(), Palette.BORDER, dp(1))
+        }
+        rowv.addChild(
+            iconTile(R.drawable.ic_launcher_foreground, bg = Palette.AMBER_BG, fg = Palette.AMBER, sizeDp = 30, iconDp = 18),
+            dp(30), dp(30),
+        )
+        val texts = column()
+        texts.addChild(text("ScrollStop", TextStyle.SMALL_BOLD))
+        texts.addChild(text("turn this on", TextStyle.CAPTION, Palette.FAINT), top = dp(1))
+        rowv.addChild(texts, 0, WRAP, weight = 1f, start = dp(10))
+
+        val track = FrameLayout(this).apply { background = rounded(Palette.MINT, dp(13).toFloat()) }
+        track.addView(
+            View(this).apply { background = circle(0xFFFFFFFF.toInt()) },
+            FrameLayout.LayoutParams(dp(18), dp(18)).apply {
+                gravity = Gravity.END or Gravity.CENTER_VERTICAL
+                marginEnd = dp(4)
+            },
+        )
+        rowv.addChild(track, dp(42), dp(26), start = dp(10))
+        return rowv
     }
 }

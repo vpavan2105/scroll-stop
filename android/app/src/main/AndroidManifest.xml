@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Note: NO internet permission. Nothing can leave the phone. -->
 
@@ -7,6 +8,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Lets the watchdog job keep running after the phone restarts -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Off-guard (OffGuard / WatcherService): while ScrollStop is switched off,
+         notice when Instagram/YouTube opens (usage access) and show the block
+         screen over them (display over other apps). Both are one-tap toggles. -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <!-- Android 11+ hides other apps by default; we only need to see (and open) these two -->
     <queries>
@@ -34,6 +43,13 @@
         <activity android:name=".ui.LimitsActivity" android:exported="false" />
         <activity android:name=".ui.UnlockActivity" android:exported="false" />
         <activity android:name=".ui.RepairActivity" android:exported="false" />
+        <activity android:name=".ui.AutoModeActivity" android:exported="false" />
+        <activity
+            android:name=".ui.BlockActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:taskAffinity=".block" />
 
         <!-- The background "watcher". Android starts it when you switch it on
              in Settings > Accessibility. Only the system may bind to it
@@ -50,6 +66,25 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
         </service>
+
+        <!-- Off-guard watcher: while ScrollStop is off, blocks Instagram/YouTube and reminds you to turn it on -->
+        <service
+            android:name=".WatcherService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="While the app's accessibility service is switched off, blocks Instagram and YouTube and reminds the user to turn it back on" />
+        </service>
+
+        <!-- Restarts the auto on/off watcher after the phone restarts -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <!-- Runs every ~15 min to check the blocker is still alive -->
         <service

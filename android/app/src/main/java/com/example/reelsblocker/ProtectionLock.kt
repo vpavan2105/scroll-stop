@@ -5,12 +5,13 @@ import android.os.SystemClock
 import android.provider.Settings
 
 /**
- * The "10 minutes to unlock" rule.
+ * The "5 minutes to unlock" rule.
  *
- *  Locked ──(request unlock)──> Waiting 10 min ──> Unlocked for 5 min ──> Locked
+ *  Locked ──(request unlock)──> Waiting 5 min ──> Unlocked for 5 min ──> Locked
  *
- * While not Unlocked you can't switch the blocker off in Accessibility
- * settings, or raise the daily limits. (Uninstalling is always allowed.)
+ * While not Unlocked you can't raise the daily limits, or remove a required
+ * permission (Usage access / Display over other apps). Switching the blocker
+ * off in Accessibility for banking, and uninstalling, are always allowed.
  *
  * Time is measured with the phone's "time since boot" clock, so changing the
  * date/time in Settings doesn't skip the wait. A restart cancels a pending
@@ -19,7 +20,7 @@ import android.provider.Settings
 class ProtectionLock(private val context: Context) {
 
     companion object {
-        const val WAIT_MS = 10 * 60 * 1000L
+        const val WAIT_MS = 5 * 60 * 1000L
         const val OPEN_MS = 5 * 60 * 1000L
         private const val KEY_REQUESTED_AT = "requested_at"
         private const val KEY_BOOT = "boot_count"
@@ -48,7 +49,7 @@ class ProtectionLock(private val context: Context) {
 
     fun isUnlocked() = state() is State.Unlocked
 
-    /** Start the 10-minute wait (does nothing if already waiting/unlocked). */
+    /** Start the 5-minute wait (does nothing if already waiting/unlocked). */
     fun requestUnlock() {
         if (state() != State.Locked) return
         prefs.edit()

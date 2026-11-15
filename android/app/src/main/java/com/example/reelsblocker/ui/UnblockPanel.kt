@@ -46,10 +46,10 @@ fun Context.unblockMessagePanel(
     )
     val body = when (mode) {
         UnblockMode.LOCKED ->
-            "You switched this on to take back your time. To switch it off, open ScrollStop, " +
-                "request an unlock and wait 10 minutes."
+            "You switched this on to take back your time. To change this, open ScrollStop, " +
+                "request an unlock and wait 5 minutes. (You can switch ScrollStop off for banking any time.)"
         UnblockMode.CAN_CONTINUE ->
-            "You set these limits for yourself. If you still want to switch protection off, that's your call."
+            "You set this up for yourself. If you still want to change it, that's your call."
     }
     addChild(
         text(body, TextStyle.BODY, Palette.TEXT_SOFT).apply { gravity = Gravity.CENTER },

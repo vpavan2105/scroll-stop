@@ -152,13 +152,19 @@ class ReelsBlockerService : AccessibilityService() {
 
         Notifier.cancel(this, Notifier.ID_OFF)       // we're running again
         WatchdogJobService.schedule(this)            // checks on us every ~15 min
+        WatcherService.stop(this)                    // we're on now; the off-guard isn't needed
     }
 
     override fun onInterrupt() { /* required by Android; nothing to do */ }
 
     /** Called when the service is switched off in Settings. */
     override fun onUnbind(intent: Intent?): Boolean {
-        Notifier.showOff(this, "Protection was switched off. Tap to turn it back on.")
+        if (OffGuard.active(this)) {
+            // Off-guard set up: block Instagram/YouTube and show its own reminder instead.
+            WatcherService.start(this)
+        } else {
+            Notifier.showOff(this, "Protection was switched off. Tap to turn it back on.")
+        }
         return super.onUnbind(intent)
     }
 
@@ -242,7 +248,7 @@ class ReelsBlockerService : AccessibilityService() {
     }
 
     private fun evaluateInstagram(root: AccessibilityNodeInfo) {
-        // 1. Hide the two tab buttons
+        // Find the tabs.
         val reelsTab = findTab(
             root,
             learned.ids(TeachTarget.REELS_TAB, listOf(InstagramIds.REELS_TAB)),
@@ -253,26 +259,35 @@ class ReelsBlockerService : AccessibilityService() {
             learned.ids(TeachTarget.EXPLORE_TAB, listOf(InstagramIds.EXPLORE_TAB)),
             learned.labels(TeachTarget.EXPLORE_TAB, InstagramIds.EXPLORE_TAB_LABELS),
         )
-        coverNode(reelsCover, reelsTab)
-        coverNode(exploreCover, exploreTab)
+        val homeTab = findTab(root, listOf(InstagramIds.HOME_TAB), InstagramIds.HOME_TAB_LABELS)
         health.onInstagramScreen(root, reelsTab != null, exploreTab != null)
 
-        // 2. Ended up on the Reels or Explore tab anyway (e.g. via a link)? Go Home.
-        val homeTab = findTab(root, listOf(InstagramIds.HOME_TAB), InstagramIds.HOME_TAB_LABELS)
-        if (reelsTab?.isSelected == true || exploreTab?.isSelected == true) {
+        // 1. Hide a tab only ONCE today's limit is used up. Below the limit you can
+        //    still open Reels and Explore (so Explore search keeps working).
+        val reelsOverLimit = reels.limitReached()
+        val exploreOverLimit = feedCounter.limitReached()
+        if (reelsOverLimit) coverNode(reelsCover, reelsTab) else reelsCover.hide()
+        if (exploreOverLimit) coverNode(exploreCover, exploreTab) else exploreCover.hide()
+
+        // 2. On the Reels or Explore tab AFTER the limit? Bounce Home.
+        val onReels = reelsTab?.isSelected == true
+        val onExplore = exploreTab?.isSelected == true
+        if ((onReels && reelsOverLimit) || (onExplore && exploreOverLimit)) {
             reels.close()
             goHome(homeTab)
             return
         }
 
-        // 3. Reels player opened from a chat, a post or a profile
+        // 3. Reels player (from the tab, a chat, a post or a profile): count each reel,
+        //    and PlayerLimiter closes it once the daily limit is reached.
         val playerVisible = anyVisible(root, reelsPlayerIds())
         reels.update(playerVisible)
 
-        // 4. The "For you" Home feed: daily limit of suggested posts, then cover it
-        val homeTitle = if (playerVisible) null else followingSwitcher.findHomeTitle(root)
+        // 4. The "For you" Home feed: daily limit of suggested posts, then cover it.
+        val onReelsOrExplore = onReels || onExplore
+        val homeTitle = if (playerVisible || onReelsOrExplore) null else followingSwitcher.findHomeTitle(root)
         onForYouFeed = when {
-            playerVisible -> false
+            playerVisible || onReelsOrExplore -> false
             homeTitle != null -> true            // the "For you" / "Instagram" title is visible
             homeTab == null -> false             // no bottom bar: Following feed, a chat, ...
             otherTabSelected(root) -> false      // you switched to Profile, Messages, ...
@@ -286,8 +301,8 @@ class ReelsBlockerService : AccessibilityService() {
             feedCover.hide()
         }
 
-        // 5. Just opened Instagram? Jump to "Following" once.
-        if (!playerVisible) followingSwitcher.check(root)
+        // 5. Just opened Instagram? Jump to "Following" once — but not while on Reels/Explore.
+        if (!playerVisible && !onReelsOrExplore) followingSwitcher.check(root)
     }
 
     private fun evaluateYouTube(root: AccessibilityNodeInfo) {
@@ -297,8 +312,9 @@ class ReelsBlockerService : AccessibilityService() {
             learned.ids(TeachTarget.SHORTS_TAB, emptyList()),
             learned.labels(TeachTarget.SHORTS_TAB, YouTubeIds.SHORTS_TAB_LABELS),
         )
-        coverNode(shortsCover, shortsTab)
-        if (shortsTab?.isSelected == true) {
+        val shortsOverLimit = shorts.limitReached()
+        if (shortsOverLimit) coverNode(shortsCover, shortsTab) else shortsCover.hide()
+        if (shortsTab?.isSelected == true && shortsOverLimit) {
             shorts.close()
             goHome(findTab(root, emptyList(), YouTubeIds.HOME_TAB_LABELS))
             return
@@ -308,7 +324,7 @@ class ReelsBlockerService : AccessibilityService() {
 
     /** 7. The Settings page that switches us off: cover it with the message. */
     private fun evaluateSettings(root: AccessibilityNodeInfo) {
-        if (!guard.isSwitchOffPage(root) || SystemClock.uptimeMillis() < guardDismissedUntil) {
+        if (!guard.isGuardedPage(root) || SystemClock.uptimeMillis() < guardDismissedUntil) {
             guardCover.hide()
             return
         }

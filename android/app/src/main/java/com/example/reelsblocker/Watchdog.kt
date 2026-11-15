@@ -37,6 +37,12 @@ object ServiceStatus {
 
     /** Show or clear the "ScrollStop is OFF" notification. */
     fun checkAndNotify(context: Context) {
+        if (OffGuard.active(context) && !isRunning(context)) {
+            // Switched off on purpose: the off-guard blocks Instagram/YouTube instead.
+            Notifier.cancel(context, Notifier.ID_OFF)
+            WatcherService.start(context)
+            return
+        }
         when {
             isRunning(context) -> Notifier.cancel(context, Notifier.ID_OFF)
             isEnabled(context) -> Notifier.showOff(

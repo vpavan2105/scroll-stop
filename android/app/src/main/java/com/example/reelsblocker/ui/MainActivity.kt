@@ -6,12 +6,14 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import com.example.reelsblocker.OffGuard
 import com.example.reelsblocker.DailyCounter
 import com.example.reelsblocker.InstagramHealthCheck
 import com.example.reelsblocker.ProtectionLock
 import com.example.reelsblocker.R
 import com.example.reelsblocker.ServiceStatus
 import com.example.reelsblocker.WatchdogJobService
+import com.example.reelsblocker.WatcherService
 
 /**
  * Home (design screen 2): today's numbers first, then what is blocked
@@ -33,14 +35,16 @@ class MainActivity : Screen() {
         super.onCreate(savedInstanceState)
         lock = ProtectionLock(this)
         WatchdogJobService.schedule(this)
-        // First time, and protection isn't switched on yet: show the setup steps.
-        if (!ServiceStatus.isEnabled(this) && !setupShownThisRun) {
+        WatcherService.start(this)          // off-guard, if ScrollStop is currently off
+        // First time: show setup if ScrollStop isn't on yet, or a required permission is missing.
+        if ((!ServiceStatus.isEnabled(this) || !OffGuard.ready(this)) && !setupShownThisRun) {
             setupShownThisRun = true
             open(SetupActivity::class.java)
         }
     }
 
     override fun build() {
+        val offGuard = OffGuard.active(this)
         val running = ServiceStatus.isRunning(this)
         val enabled = ServiceStatus.isEnabled(this)
         val reels = DailyCounter.reels(this)
@@ -55,6 +59,7 @@ class MainActivity : Screen() {
             when {
                 running -> chip("Protection on", Palette.MINT, Palette.MINT_BG, R.drawable.ic_shield_check)
                 enabled -> chip("Not running", Palette.AMBER, Palette.AMBER_BG, R.drawable.ic_alert)
+                offGuard -> chip("Off for banking", Palette.AMBER, Palette.AMBER_BG, R.drawable.ic_alert)
                 else -> chip("Protection off", Palette.RED, Palette.RED_BG, R.drawable.ic_alert)
             },
             WRAP, WRAP,
@@ -75,12 +80,12 @@ class MainActivity : Screen() {
 
         place(sectionLabel("Inside YouTube"), 24)
         place(listCard(listOf(
-            listRow(R.drawable.ic_reels_off, "Shorts tab",
-                if (running) chip("Hidden", Palette.MINT, Palette.MINT_BG) else chip("Off", Palette.RED, Palette.RED_BG)),
-            listRow(R.drawable.ic_chat_reel, "Shorts you open", text("${shorts.limit} a day", TextStyle.SMALL_BOLD, Palette.AMBER)),
+            listRow(R.drawable.ic_chat_reel, "Shorts", text("${shorts.limit} a day", TextStyle.SMALL_BOLD, Palette.AMBER)),
+            listRow(R.drawable.ic_reels_off, "Shorts tab", text("Hidden once the limit is used up", TextStyle.SMALL, Palette.MUTED)),
         )), 10)
 
         place(lockCard(), 20)
+        place(bankingRow(offGuard), 12)
         place(repairRow(health.problem, health.checked, health.instagramVersion), 12)
 
         placeSpacer()
@@ -141,19 +146,15 @@ class MainActivity : Screen() {
     }
 
     private fun rulesCard(running: Boolean, reelsFound: Boolean, exploreFound: Boolean, reels: DailyCounter, feed: DailyCounter): View {
-        fun tabState(found: Boolean): View = when {
-            !running -> chip("Off", Palette.RED, Palette.RED_BG)
-            !found -> chip("Not found", Palette.AMBER, Palette.AMBER_BG)
-            else -> chip("Hidden", Palette.MINT, Palette.MINT_BG)
-        }
         fun limitText(limit: Int) = text("$limit a day", TextStyle.SMALL_BOLD, Palette.AMBER)
+        fun note(t: String) = text(t, TextStyle.SMALL, Palette.MUTED)
 
         return listCard(listOf(
-            listRow(R.drawable.ic_reels_off, "Reels tab", tabState(reelsFound)),
-            listRow(R.drawable.ic_compass, "Explore tab", tabState(exploreFound)),
-            listRow(R.drawable.ic_following, "Opening Instagram", text("Shows Following", TextStyle.SMALL, Palette.MUTED)),
+            listRow(R.drawable.ic_chat_reel, "Reels (tab & chats)", limitText(reels.limit)),
+            listRow(R.drawable.ic_reels_off, "Reels tab", note("Hidden once the limit is used up")),
             listRow(R.drawable.ic_feed, "Suggested posts", limitText(feed.limit)),
-            listRow(R.drawable.ic_chat_reel, "Reels from chats", limitText(reels.limit)),
+            listRow(R.drawable.ic_compass, "Explore tab", note("Hidden once the suggested limit is used up")),
+            listRow(R.drawable.ic_following, "Opening Instagram", note("Shows Following")),
         ))
     }
 
@@ -190,10 +191,27 @@ class MainActivity : Screen() {
 
     private fun lockBodyText(state: ProtectionLock.State): String = when (state) {
         ProtectionLock.State.Locked ->
-            "Switching protection off or raising a limit needs a 10-minute wait. Uninstalling is always allowed."
+            "Raising a limit, or removing a required permission, needs a 5-minute wait. Switching off for banking and uninstalling are always allowed."
         is ProtectionLock.State.Waiting -> "Opens in ${mmss(state.msLeft)}."
         is ProtectionLock.State.Unlocked ->
             "You can switch protection off or raise limits for ${mmss(state.msLeft)}."
+    }
+
+    private fun bankingRow(offGuard: Boolean): View {
+        val row = clickableCard { open(AutoModeActivity::class.java) }
+        row.addChild(iconTile(R.drawable.ic_shield_check), dp(40), dp(40))
+        val texts = column()
+        texts.addChild(text("Restricted apps", TextStyle.HEADING))
+        texts.addChild(
+            text(
+                if (offGuard) "Switch off to use them · Instagram stays blocked" else "Finish setup first",
+                TextStyle.CAPTION, if (offGuard) Palette.MUTED else Palette.AMBER,
+            ),
+            top = dp(2),
+        )
+        row.addChild(texts, 0, WRAP, weight = 1f, start = dp(14))
+        row.addChild(icon(R.drawable.ic_chevron_right, Palette.FAINT), dp(18), dp(18), start = dp(8))
+        return row
     }
 
     private fun repairRow(problem: Boolean, checked: Boolean, version: String): View {

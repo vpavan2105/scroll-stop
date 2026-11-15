@@ -27,9 +27,10 @@ object YouTubeIds {
 /** Which kind of build this is. */
 object Edition {
     /**
-     * true  = the version you share yourself: switching protection off needs the 10-minute unlock.
-     * false = the Play Store version: Google's rules don't allow blocking the off switch,
-     *         so the message appears but you can continue.
+     * true  = the version you share yourself: the 5-minute unlock guards removing a
+     *         required permission (Usage access / Display over other apps) and raising a limit.
+     *         Switching protection off for banking is always allowed.
+     * false = a relaxed build: the message appears but you can continue without the wait.
      */
     const val STRICT_LOCK = true
 }
