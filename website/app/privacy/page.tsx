@@ -48,7 +48,7 @@ export default function Privacy() {
             If this policy changes, the new version will be posted here with a new date.{" "}
             {site.contactEmail ? <>Questions: <Link href="/contact">contact page</Link>.</> : null}
           </p>
-          <DevNote>set contactEmail in site.config.ts to show the contact line.</DevNote>
+          {!site.contactEmail && <DevNote>set contactEmail in site.config.ts to show the contact line.</DevNote>}
         </div>
       </div>
     </>
