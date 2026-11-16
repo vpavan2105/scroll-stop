@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/Icon";
 import { PhoneMockup } from "@/components/PhoneMockup";
+import { ScenarioPhones } from "@/components/ScenarioPhones";
 import { getApkInfo } from "@/lib/apk";
 import { latest, site } from "@/site.config";
 
 const highlights: { icon: IconName; title: string; text: string }[] = [
-  { icon: "reelsOff", title: "Hides the tabs", text: "Reels and Explore in Instagram, Shorts in YouTube: covered, so they can't be tapped." },
+  { icon: "clock", title: "Limits, not blackouts", text: "Reels, Explore and Shorts work up to your daily limit. Once you hit it, that tab is hidden until tomorrow." },
   { icon: "following", title: "Opens Following", text: "Instagram starts on your Following feed: only people you follow, no suggestions." },
-  { icon: "clock", title: "Daily limits", text: "30 a day each for reels, suggested posts and Shorts. Pick anything from 1 to 50." },
-  { icon: "lock", title: "A strict lock", text: "Switching it off takes a 10-minute wait. Uninstalling is always allowed." },
+  { icon: "reelsOff", title: "Search still works", text: "The Explore tab stays usable up to the limit, so you can still look people up. Chats and Stories always work." },
+  { icon: "lock", title: "Restriction friendly", text: "Switch it off any time for a restricted app. While off, Instagram and YouTube stay blocked until you turn it back on." },
 ];
 
 export default function Home() {
@@ -21,8 +22,8 @@ export default function Home() {
             <span className="eyebrow"><Icon name="shield" size={16} />Free · No ads · No internet access</span>
             <h1>Keep Instagram and YouTube. <em>Lose the endless scroll.</em></h1>
             <p className="lead">
-              ScrollStop hides Reels, Explore and Shorts inside the real apps, opens your Following feed,
-              and gives you a daily limit for everything else. Chats, Stories and the people you follow keep working.
+              ScrollStop lets you use Reels, Explore and Shorts up to a daily limit, then hides them. It opens your
+              Following feed, and chats, Stories and the people you follow keep working.
             </p>
             <div className="btn-row">
               <a className="btn btn-primary" href={`/${latest.file}`} download>
@@ -58,10 +59,19 @@ export default function Home() {
         </div>
       </div>
 
+      <div className="section">
+        <div className="wrap">
+          <p className="label">What you&apos;ll see</p>
+          <h2>Three everyday moments</h2>
+          <p className="sub">Nothing inside Instagram or YouTube is changed &mdash; ScrollStop only draws over the parts you&apos;ve asked it to.</p>
+          <ScenarioPhones />
+        </div>
+      </div>
+
       <div className="band">
         <div className="wrap">
           <div className="quote">
-            <p>What you see when you try to switch it off:</p>
+            <p>A gentle reminder when you try to weaken it:</p>
             <strong>This app isn&apos;t controlling you. Social media is.</strong>
             <small>You set these limits for yourself. ScrollStop just remembers them when it&apos;s hard to.</small>
           </div>
@@ -73,7 +83,7 @@ export default function Home() {
           <Link className="card" href="/how-it-works">
             <div className="tile"><Icon name="eye" size={22} /></div>
             <h3>How it works</h3>
-            <p>Four small jobs, all on your phone.</p>
+            <p>A few small jobs, all on your phone.</p>
           </Link>
           <Link className="card" href="/install">
             <div className="tile"><Icon name="download" size={22} /></div>

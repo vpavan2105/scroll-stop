@@ -6,16 +6,16 @@ import { PageIntro } from "@/components/PageIntro";
 export const metadata: Metadata = { title: "How it works" };
 
 const steps = [
-  { title: "It sees the screen", text: "Android describes every screen as a tree of buttons and lists. That's how screen readers read apps aloud. ScrollStop is an Accessibility service too, so it can read that tree whenever Instagram or YouTube changes." },
-  { title: "It finds the buttons", text: "It looks for the Reels, Explore and Shorts buttons by their internal names, with their labels (\"Reels\", \"Shorts\") as a back-up." },
-  { title: "It covers them", text: "It draws a plain box over each button in a special overlay window that only Accessibility services can use. Nothing inside Instagram or YouTube is changed." },
+  { title: "It sees the screen", text: "Android describes every screen as a tree of buttons and lists — that's how screen readers read apps aloud. ScrollStop is an Accessibility service too, so it can read that tree whenever Instagram or YouTube changes." },
   { title: "It counts", text: "Each swipe in a reel or Short counts as one, and so does every screen of suggested posts you scroll past. Today's counts are saved on your phone and reset at midnight." },
+  { title: "It hides a tab once the limit is used up", text: "While you're under your daily limit, the Reels, Explore and Shorts tabs work normally. Once you've used up the day's limit, ScrollStop covers that tab with a plain box until midnight. Nothing inside the apps is changed." },
+  { title: "It steps aside for restricted apps", text: "Some apps, like YONO, won't run while an accessibility app is on. Switch ScrollStop off any time to use one of these restricted apps; a lightweight check then keeps Instagram and YouTube blocked until you switch it back on, so turning it off isn't a way back to endless scrolling." },
 ];
 
 export default function HowItWorks() {
   return (
     <>
-      <PageIntro label="How it works" title="Four small jobs, all on your phone">
+      <PageIntro label="How it works" title="A few small jobs, all on your phone">
         No servers, no account, no internet. ScrollStop only changes what your own screen shows.
       </PageIntro>
       <div className="section">

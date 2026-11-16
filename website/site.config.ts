@@ -13,15 +13,15 @@ export type Release = {
 
 const releases: Release[] = [
   {
-    version: "5.1",
-    date: "15 Nov 2026",
-    file: "ScrollStop-v5.1.apk",
+    version: "5.7",
+    date: "16 Nov 2026",
+    file: "ScrollStop-v5.7.apk",
     notes: [
-      "New name: ScrollStop (installs as a new app, so remove the old \"Reels Blocker\").",
-      "Banking apps like YONO open normally: ScrollStop now only sees Instagram, YouTube and Settings.",
-      "YouTube Shorts: the Shorts tab is hidden and Shorts get a daily limit.",
-      "A reminder appears when you try to switch protection off.",
-      "Clearer setup on Android 13 and newer (the \"Restricted setting\" message).",
+      "The Reels, Explore and Shorts tabs now stay usable until you hit your daily limit, then they're hidden — so Instagram search keeps working until then.",
+      "Switch ScrollStop off any time for a restricted app: while it's off, Instagram and YouTube stay blocked and a reminder brings you back.",
+      "Restricted apps like YONO open normally once ScrollStop is switched off — it only watches Instagram, YouTube and Settings.",
+      "Simpler setup, one step at a time, with an illustrated how-to for each permission.",
+      "No name shown, no internet access: everything stays on your phone.",
     ],
   },
   // Older versions go below, e.g.:
@@ -32,7 +32,7 @@ export const site = {
   name: "ScrollStop",
   tagline: "Keep Instagram and YouTube. Lose the endless scroll.",
   description:
-    "ScrollStop is a free Android app that hides Reels, Explore and Shorts inside the real Instagram and YouTube apps and gives you daily limits. No ads, no internet access.",
+    "ScrollStop is a free Android app that puts a daily limit on Reels, Explore and Shorts inside the real Instagram and YouTube apps. Use them up to your limit, then the tab is hidden. No ads, no internet access.",
 
   /** The live address, e.g. "https://scrollstop.vercel.app" (used for link previews). */
   url: "https://scrollstop.vercel.app",
@@ -57,7 +57,7 @@ export const site = {
     /** Suggested amounts in rupees. */
     amounts: [30, 50, 100] as number[],
     /** Optional: a Buy Me a Coffee / Ko-fi page for people outside India. */
-    internationalUrl: "",
+    internationalUrl: "https://buymeacoffee.com/pavankumarlw",
     internationalLabel: "Buy me a coffee",
   },
 };

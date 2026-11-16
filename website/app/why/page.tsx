@@ -12,12 +12,12 @@ export default function Why() {
         <div className="wrap">
           <div className="card" style={{ marginBottom: 16 }}>
             <h3>Why I built it</h3>
-            <p>I didn&apos;t want to quit Instagram. I use it to chat with friends and to see what the people I follow are up to. The problem was the endless scrolling: open it for one message, look up 40 minutes later. ScrollStop keeps the useful parts, chats and the people you follow, and blocks only the scrolling.</p>
+            <p>I didn&apos;t want to quit Instagram. I use it to chat with friends and to see what the people I follow are up to. The problem was the endless scrolling: open it for one message, look up 40 minutes later. ScrollStop keeps the useful parts, chats and the people you follow, and puts a limit on the scrolling.</p>
           </div>
           <div className="grid g2">
             <div className="card">
-              <h3>The strict lock isn&apos;t allowed there</h3>
-              <p>Google Play doesn&apos;t let apps use Accessibility to stop you switching an app off. ScrollStop&apos;s 10-minute wait is its strongest feature, so a Play Store version would have to drop it.</p>
+              <h3>Its design doesn&apos;t fit Play&apos;s rules</h3>
+              <p>Google Play doesn&apos;t allow Accessibility apps that resist being switched off, and ScrollStop&apos;s gentle lock and off-for-restricted-apps design sit outside those rules. Sharing it as a file keeps that design intact and free.</p>
             </div>
             <div className="card">
               <h3>It was built to learn</h3>
