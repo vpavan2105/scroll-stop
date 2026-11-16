@@ -89,6 +89,13 @@ export default function Install() {
           </ol>
 
           <div className="note" style={{ marginTop: 20 }}>
+            <Icon name="download" color="#F5B13D" />
+            <span>
+              It won&apos;t update itself &mdash; ScrollStop has no internet access, so nothing about you ever leaves your phone.
+              When a new version is out, download it here and install over the old one; your limits and counts stay.
+            </span>
+          </div>
+          <div className="note" style={{ marginTop: 12 }}>
             <Icon name="info" color="#A3A8B4" />
             <span>
               Coming from the old &quot;Reels Blocker&quot;? ScrollStop {latest.version} installs separately, so uninstall Reels Blocker first.

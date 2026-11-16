@@ -35,8 +35,8 @@ export default function Faq() {
             <p>Uninstall it like any app: long-press the icon › Uninstall. That always works, with no wait. To only pause it for a restricted app, switch it off from the main screen — also no wait. The 5-minute wait only applies if you try to remove a permission ScrollStop relies on, or raise a limit.</p>
           </details>
           <details>
-            <summary>How do I update it?</summary>
-            <p>Download the latest version from this site and install it over the old one. Your limits and counts are kept. See the <Link href="/versions">Versions page</Link> for what changed.</p>
+            <summary>Does it update itself?</summary>
+            <p>No, and on purpose. ScrollStop has no internet access and isn&apos;t on the Play Store, so it can&apos;t update in the background &mdash; nothing about you ever leaves your phone. When there&apos;s a new version, come back to this site, download it and install over the old one; your limits and counts are kept. The <Link href="/versions">Versions page</Link> shows what changed.</p>
           </details>
           <details>
             <summary>Does it work on iPhone?</summary>
