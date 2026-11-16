@@ -11,7 +11,7 @@ const links = [
   { href: "/install", label: "Install" },
   { href: "/versions", label: "Versions" },
   { href: "/faq", label: "FAQ" },
-  { href: "/support", label: "Buy me a tea" },
+  { href: "/support", label: "Buy me a coffee" },
 ];
 
 /** Top bar. The Download button gets the latest APK straight away (no extra page). */

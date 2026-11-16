@@ -46,7 +46,7 @@ export const site = {
   releases,
 
   /** Where questions go (shown on the Contact and Privacy pages). */
-  contactEmail: "",
+  contactEmail: "vpktech21@gmail.com",
 
   /** "Buy me a tea". Fill in whichever you use; empty ones are hidden. */
   support: {

@@ -92,7 +92,7 @@ export default function Home() {
           </Link>
           <Link className="card" href="/support">
             <div className="tile amber"><Icon name="tea" size={22} /></div>
-            <h3>Buy me a tea</h3>
+            <h3>Buy me a coffee</h3>
             <p>ScrollStop is free. If it gave you time back, say thanks.</p>
           </Link>
         </div>

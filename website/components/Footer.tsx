@@ -10,7 +10,7 @@ export function Footer() {
           <Link href="/why">Why not Play Store</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/contact">Contact</Link>
-          <Link href="/support">Buy me a tea</Link>
+          <Link href="/support">Buy me a coffee</Link>
           <a href="https://vpktech.online" target="_blank" rel="noopener">More of my work</a>
         </nav>
       </div>
