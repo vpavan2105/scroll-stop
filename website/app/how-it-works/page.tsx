@@ -33,14 +33,40 @@ export default function HowItWorks() {
             ))}
           </ol>
 
-          <div className="note" style={{ marginTop: 20 }}>
-            <Icon name="wrench" color="#F5B13D" />
-            <span>
-              If an app moves a button it can reappear. ScrollStop notices, notifies you, and lets you fix it:
-              open <b>After an app update</b>, tap <b>Re-learn</b>, then tap that button once.
-            </span>
+          <div className="relearn-box">
+            <p className="label">After an app update</p>
+            <h3 className="rl-title">If a tab comes back, re-teach it in seconds</h3>
+            <p className="rl-sub">Instagram and YouTube move their buttons now and then, and a hidden one can slip back. ScrollStop can&apos;t guess the new layout, so instead it notices, tells you, and lets you point the button out once &mdash; all on your phone.</p>
+            <div className="relearn">
+              <div className="rl-step">
+                <span className="rl-ico"><Icon name="info" size={20} /></span>
+                <b>It warns you</b>
+                <span>A notification: &ldquo;the Reels tab is back&rdquo;.</span>
+              </div>
+              <span className="rl-arrow" aria-hidden="true">&rarr;</span>
+              <div className="rl-step">
+                <span className="rl-ico"><Icon name="wrench" size={20} /></span>
+                <b>Tap Re-learn</b>
+                <span>Open <i>After an app update</i> and tap it.</span>
+              </div>
+              <span className="rl-arrow" aria-hidden="true">&rarr;</span>
+              <div className="rl-step">
+                <span className="rl-ico">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11V6a1.8 1.8 0 013.6 0v5" /><path d="M12.6 11V9a1.8 1.8 0 013.6 0v2" /><path d="M16.2 11v-.5a1.8 1.8 0 013.6 0V15a5 5 0 01-5 5h-2a5 5 0 01-4.4-2.6L5 13.5a1.8 1.8 0 013.1-1.8L9 13" /></svg>
+                </span>
+                <b>Point to the button</b>
+                <span>Tap it once in the app, within 30s.</span>
+              </div>
+              <span className="rl-arrow" aria-hidden="true">&rarr;</span>
+              <div className="rl-step done">
+                <span className="rl-ico"><Icon name="check" size={20} strokeWidth={3} /></span>
+                <b>Hidden again</b>
+                <span>ScrollStop has re-learned it.</span>
+              </div>
+            </div>
           </div>
-          <div className="note" style={{ marginTop: 12 }}>
+
+          <div className="note" style={{ marginTop: 16 }}>
             <Icon name="eye" color="#A3A8B4" />
             <span>Curious what it can see and keep? <Link href="/privacy">Read the privacy page</Link>.</span>
           </div>

@@ -302,3 +302,20 @@ details ul { padding-left: 20px; }
 .hd-arow i { font-style: normal; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
 .hd-arow i.ok { background: var(--mint-bg); color: var(--mint); }
 .hd-arow i.no { background: #2a1414; color: #f0a3a3; }
+
+/* ---- After an app update: re-learn flow ---- */
+.relearn-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-top: 24px; }
+.rl-title { margin: 8px 0 6px; font-size: 18px; }
+.rl-sub { color: var(--muted); margin: 0 0 20px; font-size: 15px; max-width: 660px; }
+.relearn { display: flex; align-items: stretch; gap: 10px; }
+.rl-step { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; padding: 16px; border-radius: 14px; background: var(--ink); border: 1px solid var(--border); }
+.rl-ico { width: 38px; height: 38px; border-radius: 11px; background: var(--amber-bg); color: var(--amber); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.rl-step.done .rl-ico { background: var(--mint-bg); color: var(--mint); }
+.rl-step b { font-size: 13.5px; color: var(--text); }
+.rl-step > span:last-child { font-size: 12px; line-height: 1.45; color: var(--faint); }
+.rl-step i { font-style: normal; color: var(--soft); }
+.rl-arrow { align-self: center; color: var(--faint); font-size: 18px; flex: none; }
+@media (max-width: 760px) {
+  .relearn { flex-direction: column; }
+  .rl-arrow { transform: rotate(90deg); }
+}
