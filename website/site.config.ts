@@ -37,6 +37,9 @@ export const site = {
   /** The live address, e.g. "https://scrollstop.vercel.app" (used for link previews). */
   url: "https://scrollstop.vercel.app",
 
+  /** Public source code, so anyone can read it or build their own. Empty hides the links. */
+  github: "https://github.com/vpavan2105/scroll-stop",
+
   minAndroid: "Android 8.0+",
 
   /**

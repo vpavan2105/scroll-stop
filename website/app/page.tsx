@@ -12,6 +12,23 @@ const highlights: { icon: IconName; title: string; text: string }[] = [
   { icon: "lock", title: "Restriction friendly", text: "Switch it off any time for a restricted app. While off, Instagram and YouTube stay blocked until you turn it back on." },
 ];
 
+const diffOther = [
+  "Lock the whole app on a timer",
+  "All-or-nothing \u2014 no chats, no Following",
+  "Need a separate app and a login",
+  "Need internet or an account",
+  "Ads, or a subscription",
+  "Can see or collect your usage",
+];
+const diffOurs = [
+  "No timer \u2014 open it whenever you want",
+  "Keeps chats and the people you follow",
+  "No login; runs inside the real apps",
+  "Fully offline",
+  "Free, no ads",
+  "No data used \u2014 nothing leaves your phone",
+];
+
 export default function Home() {
   const apk = getApkInfo(latest.file);
   return (
@@ -42,6 +59,15 @@ export default function Home() {
       </div>
 
       <div className="band">
+        <div className="wrap ideawrap">
+          <p className="label">The idea</p>
+          <h2>Use the parts you want. Skip the rest.</h2>
+          <p className="sub">I didn&apos;t want to quit Instagram &mdash; I use it to chat and keep up with the people I follow. The problem was the endless scroll: open it for one message, look up 40 minutes later. ScrollStop keeps the useful parts and limits only the scrolling.</p>
+          <Link className="more" href="/why">Why I built it <Icon name="arrow" size={16} /></Link>
+        </div>
+      </div>
+
+      <div className="band">
         <div className="wrap">
           <p className="label">What it does</p>
           <h2>It removes the addictive parts, not the app</h2>
@@ -65,6 +91,45 @@ export default function Home() {
           <h2>Three everyday moments</h2>
           <p className="sub">Nothing inside Instagram or YouTube is changed &mdash; ScrollStop only draws over the parts you&apos;ve asked it to.</p>
           <ScenarioPhones />
+        </div>
+      </div>
+
+      <div className="section">
+        <div className="wrap">
+          <p className="label">How it&apos;s different</p>
+          <h2>Not another app blocker</h2>
+          <p className="sub">Most focus apps lock you out of everything. ScrollStop trims only the part that eats your time.</p>
+          <div className="compare">
+            <div className="ccol other">
+              <h3>Most app blockers</h3>
+              <ul>
+                {diffOther.map((t) => (
+                  <li key={t}><Icon name="close" size={16} strokeWidth={2.4} color="#8b91a0" /><span>{t}</span></li>
+                ))}
+              </ul>
+            </div>
+            <div className="ccol ours">
+              <h3>ScrollStop</h3>
+              <ul>
+                {diffOurs.map((t) => (
+                  <li key={t}><Icon name="check" size={16} strokeWidth={3} color="#5BD6A5" /><span>{t}</span></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="band">
+        <div className="wrap">
+          <div className="card codecard">
+            <div className="tile"><Icon name="code" size={22} /></div>
+            <h3>Not sure it&apos;s safe to install?</h3>
+            <p>Good instinct &mdash; don&apos;t just trust a downloaded app. ScrollStop is open source: read every line to check it does only what it says, or build your own copy straight from the code.</p>
+            <a className="btn btn-secondary" href={site.github} target="_blank" rel="noopener noreferrer" style={{ marginTop: 16 }}>
+              <Icon name="code" size={16} /> View the source on GitHub
+            </a>
+          </div>
         </div>
       </div>
 

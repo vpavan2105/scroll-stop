@@ -249,3 +249,56 @@ details ul { padding-left: 20px; }
 .scn-coverpanel .cp-ico { color: var(--amber-title); }
 .scn-coverpanel b { font-family: var(--display); font-size: 14px; color: var(--amber-title); }
 .scn-coverpanel .cp-chip { font-size: 10.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px; background: var(--amber); color: var(--on-amber); }
+
+/* ---- Home: the idea / compare / code ---- */
+.ideawrap { max-width: 780px; }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+.ccol { border: 1px solid var(--border); border-radius: 18px; padding: 20px; background: var(--surface); }
+.ccol.ours { border-color: var(--amber-border); }
+.ccol h3 { margin: 0 0 14px; font-size: 16px; }
+.ccol.other h3 { color: var(--muted); }
+.ccol.ours h3 { color: var(--amber-title); }
+.ccol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+.ccol li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; }
+.ccol li svg { flex: none; margin-top: 2px; }
+.ccol.other li span { color: var(--faint); }
+.ccol.ours li span { color: var(--soft); }
+.codecard { max-width: 720px; }
+
+/* ---- How it works diagrams ---- */
+.hd { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.hd-rows { display: flex; flex-direction: column; gap: 9px; width: 100%; max-width: 230px; }
+
+/* 1. tree */
+.hd-tree { display: flex; flex-direction: column; align-items: center; }
+.hd-node { font-size: 11px; font-weight: 600; padding: 6px 10px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--soft); white-space: nowrap; }
+.hd-node.root { background: var(--ink); }
+.hd-node.mark { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-title); }
+.hd-stem { width: 2px; height: 14px; background: var(--outline); }
+.hd-kids { display: flex; gap: 8px; position: relative; padding-top: 12px; }
+.hd-kids::before { content: ""; position: absolute; top: 0; left: 16%; right: 16%; height: 12px; border: 2px solid var(--outline); border-bottom: 0; border-radius: 6px 6px 0 0; }
+
+/* 2. ring */
+.hd-ring { position: relative; width: 84px; height: 84px; }
+.hd-ring b { position: absolute; inset: 0; display: flex; align-items: baseline; justify-content: center; font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--text); }
+.hd-ring b span { font-size: 12px; color: var(--faint); }
+.hd-cap { font-size: 11px; color: var(--faint); font-weight: 600; }
+
+/* 3. tabs on / hidden */
+.hd-brow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--ink); border: 1px solid var(--border); }
+.dt { display: inline-flex; gap: 7px; }
+.dt-i { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--outline); }
+.dt-i.cov { background: var(--amber); border-color: var(--amber); }
+.hd-chip { font-size: 10.5px; font-weight: 600; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+.hd-chip.mint { background: var(--mint-bg); color: var(--mint); }
+.hd-chip.amber { background: var(--amber-bg); color: var(--amber-title); border: 1px solid var(--amber-border); }
+
+/* 4. steps aside */
+.hd-pill { font-size: 10.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; align-self: flex-start; }
+.hd-pill.off { background: var(--amber-bg); color: var(--amber-title); border: 1px solid var(--amber-border); }
+.hd-arow { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; padding: 8px 11px; border-radius: 9px; background: var(--surface2); }
+.hd-arow b { font-weight: 600; color: var(--text); }
+.hd-arow i { font-style: normal; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.hd-arow i.ok { background: var(--mint-bg); color: var(--mint); }
+.hd-arow i.no { background: #2a1414; color: #f0a3a3; }

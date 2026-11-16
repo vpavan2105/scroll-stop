@@ -17,6 +17,7 @@ const paths = {
   eye: ["M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z", "M9 12a3 3 0 106 0 3 3 0 10-6 0"],
   wifiOff: ["M2 8.5a15 15 0 0120 0", "M5.5 12a10 10 0 0113 0", "M9 15.5a5 5 0 016 0", "M3 3l18 18"],
   copy: ["M9 9h11v11H9z", "M5 15H4V4h11v1"],
+  code: ["M8.5 9L5 12l3.5 3", "M15.5 9L19 12l-3.5 3", "M13.5 6.5l-3 11"],
 } as const;
 
 export type IconName = keyof typeof paths;
